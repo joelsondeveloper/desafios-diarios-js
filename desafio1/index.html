@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de gorjetas</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+
+    <main>
+        <form class="form">
+            <h1>Calculadora de gorjetas</h1>
+            <label class="form-input">
+                <span>Quanto ficou a conta?</span>
+                <input type="number" id="bill" placeholder="R$ 0,00" value="0">
+            </label>
+            <div class="form-input">
+                <span>Qual a gorjeta?</span>
+                <select id="tip">
+                    <option value="0">Nenhum</option>
+                    <option value="0.3">30%</option>
+                    <option value="0.2">20%</option>
+                    <option value="0.15">15%</option>
+                    <option value="0.1">10%</option>
+                    <option value="0.05">5%</option>
+                </select>
+            </div>
+            <label class="form-input">
+                <span>Quantas pessoas vão dividir a conta?</span>
+                <input type="number" id="people" placeholder="0" value="1">
+            </label>
+            <span class="result-tip" id="result-tip">Gorjeta por pessoa: R$ 0,00</span>
+            <span class="result-total" id="result-total">Total por pessoa: R$ 0,00</span>
+        </form>
+    </main>
+    
+    <script src="scripts/script.js"></script>
+</body>
+</html>
