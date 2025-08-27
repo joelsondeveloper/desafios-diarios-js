@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    
+    <main>
+        <form class="form">
+            <h1>Analisador de Sequencia</h1>
+            <label>
+                <span>Sequencia:</span>
+                <input type="text" id="sequence" placeholder="Ex: 1, 2, 3,4, 5, 6" value="1, 2, 3, 4, 5, 6">
+            </label>
+            <div class="output">
+                <p class="result">
+                    <span>Quantidade de dígitos validos:</span>
+                    <span id="valid-digits">0</span>
+                </p>
+                <p class="result">
+                    <span>Maior dígito:</span>
+                    <span id="max-digit">0</span>
+                </p>
+                <p class="result">
+                    <span>Menor dígito:</span>
+                    <span id="min-digit">0</span>
+                </p>
+                <p class="result">
+                    <span>O digito que mais aparece:</span>
+                    <span id="most-digit">0</span>
+                </p>
+            </div>
+        </form>
+    </main>
+
+    <script src="scripts/script.js"></script>
+</body>
+</html>
