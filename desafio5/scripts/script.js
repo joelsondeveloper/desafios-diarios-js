@@ -69,22 +69,22 @@ function createTable() {
     matrizTable.push(matrizRow);
   }
 
-  table.addEventListener("pointerdown", () => {
+  table.addEventListener("mousedown", () => {
     isMouseDown = true;
   });
 
-  table.addEventListener("pointerup", () => {
+  table.addEventListener("mouseup", () => {
     isMouseDown = false;
   });
 
   const cells = table.querySelectorAll("td");
 
   cells.forEach((cell) => {
-    cell.addEventListener("click", () => {
+    cell.addEventListener("mousedown", () => {
       toggleCell(cell);
     });
 
-    cell.addEventListener("pointermove", () => {
+    cell.addEventListener("mouseover", () => {
       if (isMouseDown) {
         toggleCell(cell);
       }
