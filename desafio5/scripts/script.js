@@ -4,9 +4,11 @@ const reset = document.querySelector("#reset");
 const time = document.querySelector("#time");
 const steps = document.querySelector("#steps");
 const outputStep = document.querySelector("#step")
+const cols = document.querySelector("#cols")
+const rows = document.querySelector("#rows")
 
-const NUM_ROWS = 50;
-const NUM_COLS = 50;
+let NUM_ROWS = 50;
+let NUM_COLS = 50;
 let intervalId = null;
 let timeGame = 0
 
@@ -32,6 +34,18 @@ playAndPause.addEventListener("click", () => {
 });
 
 reset.addEventListener("click", () => {
+  createTable();
+  outputStep.innerHTML = "0"
+});
+
+cols.addEventListener("input", () => {
+  NUM_COLS = Number(cols.value)
+  createTable();
+  outputStep.innerHTML = "0"
+});
+
+rows.addEventListener("input", () => {
+  NUM_ROWS = Number(rows.value)
   createTable();
   outputStep.innerHTML = "0"
 });
