@@ -210,7 +210,7 @@ function simulateFindPath() {
 }
 
 function buildPath(row, col) {
-  if (!row || matrizTable[row][col] === 1) return;
+  if (row == null || matrizTable[row][col] === 1) return;
 
   const stepValue = steps.value;
 
