@@ -68,11 +68,21 @@ body {
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
   font-weight: bold;
   color: #c0bfbf;
+  position: relative;
 }
 
 table {
   border-collapse: collapse;
   aspect-ratio: 1;
+}
+
+.disabled {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: .5;
 }
 
 td {
@@ -83,6 +93,22 @@ td {
   cursor: pointer;
 }
 
-td.active {
+td.start {
   background-color: #22c55e;
+}
+
+td.end {
+  background-color: #d10e0e;
+}
+
+td.wall {
+  background-color: #080202;
+}
+
+td.explored {
+  background-color: #c0bfbf;
+}
+
+td.path {
+  background-color: #3a5f6f;
 }

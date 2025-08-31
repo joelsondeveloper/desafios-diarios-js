@@ -1,11 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jogo da vida</title>
+    <link rel="stylesheet" href="styles/style.css" />
+  </head>
+  <body>
+    <div class="controls">
+      <h1>Jogo da vida</h1>
+      <div class="buttons">
+        <button id="playAndPause">Play/Pause</button>
+        <button id="reset">Resetar</button>
+      </div>
+
+      <label>
+        <span>cols:</span>
+        <input
+          type="number"
+          class="time"
+          placeholder="colunas"
+          id="cols"
+          value="10"
+        />
+      </label>
+
+      <label>
+        <span>rows:</span>
+        <input
+          type="number"
+          class="time"
+          placeholder="linhas"
+          id="rows"
+          value="10"
+        />
+      </label>
+      <p>total de passos: <span id="step">0</span></p>
+    </div>
+    <div class="container">
+      <table class="table" id="table">
+        <!-- <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr> -->
+      </table>
+      <div id="disabled"></div>
+    </div>
+
+    <script src="scripts/script.js"></script>
+  </body>
 </html>
