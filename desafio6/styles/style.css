@@ -105,10 +105,10 @@ td.wall {
   background-color: #080202;
 }
 
-td.explored {
+td.visited {
   background-color: #c0bfbf;
 }
 
 td.path {
-  background-color: #3a5f6f;
+  background-color: #4b97b8;
 }

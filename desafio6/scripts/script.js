@@ -4,13 +4,23 @@ const reset = document.querySelector("#reset");
 const outputStep = document.querySelector("#step");
 const cols = document.querySelector("#cols");
 const rows = document.querySelector("#rows");
+const steps = document.querySelector("#steps");
+const timeGame = document.querySelector("#time");
+const divDisabled = document.querySelector("#disabled");
 
 let NUM_ROWS = 10;
 let NUM_COLS = 10;
 let startDot = false;
 let finishDot = false;
+let found = false;
+let lastCell = null;
+let time = 0;
+let timeId = null;
 
 let matrizTable = [];
+let processingQueue = [];
+let visited = [];
+let matrizReference = [];
 
 let isInteracting = false;
 let startX = 0,
@@ -21,19 +31,26 @@ const DRAG_THRESHOLD = 5;
 createTable();
 
 playAndPause.addEventListener("click", () => {
-  const divDisabled = document.querySelector("#disabled");
+  initMatrizReference();
+  initTime();
 
-  divDisabled.classList.toggle("disabled");
-  console.log(startDot);
-  console.log(mapAllAround(startDot));
+  // console.log(matrizReference);
+
+  divDisabled.classList.add("disabled");
+  const coordStart = startDot.getAttribute("data-cord");
+  processingQueue.push(coordStart.split("-"));
+  simulateFindPath();
 });
 
-reset.addEventListener("click", () => {
-  createTable();
-  startDot = false;
-  finishDot = false;
-  outputStep.innerHTML = "0";
-});
+// reset.addEventListener("click", () => {
+//   matrizTable = [];
+//   matrizReference = [];
+//   createTable();
+//   divDisabled.classList.remove("disabled");
+//   startDot = false;
+//   finishDot = false;
+//   outputStep.innerHTML = "0";
+// });
 
 cols.addEventListener("input", () => {
   NUM_COLS = Number(cols.value);
@@ -80,18 +97,58 @@ function createTable() {
   table.addEventListener("touchcancel", handleInteractionEnd);
 }
 
+function renderMatriz() {
+  for (let i = 0; i < NUM_ROWS; i++) {
+    for (let j = 0; j < NUM_COLS; j++) {
+      const cell = table.rows[i].cells[j];
+      let number = matrizTable[i][j];
+
+      cell.classList.remove("start", "end", "wall", "visited", "path");
+
+      // console.log(alreadyArr(i, j));
+      if (alreadyArr(i, j) && number != 5) {
+        number = 4;
+      }
+
+      if (alreadyArr(i, j, processingQueue)) {
+        number = 5;
+      }
+
+      switch (number) {
+        case 1:
+          cell.classList.add("start");
+          break;
+        case 2:
+          cell.classList.add("end");
+          break;
+        case 3:
+          cell.classList.add("wall");
+          break;
+        case 4:
+          cell.classList.add("visited");
+          break;
+        case 5:
+          cell.classList.add("path");
+          break;
+        default:
+          break;
+      }
+    }
+  }
+}
+
 function mapAllAround(cell) {
   const [row, col] = getCoords(cell);
 
   const directions = [
-    [-1, -1], // topo esquerdo
+    // [-1, -1], // topo esquerdo
     [-1, 0], // topo
-    [-1, 1], // topo direito
+    // [-1, 1], // topo direito
     [0, -1], // esquerda
     [0, 1], // direita
-    [1, -1], // baixo esquerdo
+    // [1, -1], // baixo esquerdo
     [1, 0], // baixo
-    [1, 1], // baixo direito
+    // [1, 1], // baixo direito
   ];
 
   const directionsValid = [];
@@ -100,12 +157,77 @@ function mapAllAround(cell) {
     const newRow = row + direction[0];
     const newCol = col + direction[1];
 
-    if (verifyValueCell(matrizTable[newRow][newCol])) {
+    if (newRow < 0 || newRow >= NUM_ROWS || newCol < 0 || newCol >= NUM_COLS) {
+      return;
+    }
+
+    const [isValid, isFind] = verifyValueCell(null, [newRow, newCol]);
+
+    // console.log(isFind)
+
+    if (isValid) {
       directionsValid.push([newRow, newCol]);
+      visited.push([newRow, newCol]);
+      processingQueue.push([newRow, newCol]);
+      matrizReference[newRow][newCol] = [row, col];
+      // matrizTable[newRow][newCol] = 5;
+    } else if (isFind) {
+      processingQueue.length = 0;
+      found = true;
+      lastCell = [newRow, newCol];
+      matrizReference[newRow][newCol] = [row, col];
+      // matrizTable[newRow][newCol] = 5;
     }
   });
 
+  renderMatriz();
+
   return directionsValid;
+}
+
+function simulateFindPath() {
+  if (processingQueue.length < 1 || found) {
+    processingQueue.length = 0;
+    // console.log(matrizReference);
+    buildPath(lastCell[0], lastCell[1]);
+    clearInterval(timeId);
+    return;
+  }
+
+  // console.log(processingQueue.shift().join("-"));
+
+  const attribute = processingQueue.shift().join("-");
+  const cellDom = document.querySelector(`td[data-cord="${attribute}"]`);
+
+  // console.log("processando:", attribute);
+
+  const stepValue = Number(steps.value);
+
+  setTimeout(() => {
+    mapAllAround(cellDom);
+    simulateFindPath();
+  }, stepValue);
+}
+
+function buildPath(row, col) {
+  if (!row || matrizTable[row][col] === 1) return;
+
+  const stepValue = steps.value;
+
+  setTimeout(() => {
+    if (matrizTable[row][col] !== 2) {
+      matrizTable[row][col] = 5;
+    }
+
+    renderMatriz();
+
+    const parent = matrizReference[row][col];
+    // console.log(matrizTable[row][col]);
+    if (!parent) return;
+    [row, col] = parent;
+
+    buildPath(parent[0], parent[1]);
+  }, stepValue);
 }
 
 function applyPaint(event) {
@@ -129,37 +251,35 @@ function applyPaint(event) {
   }
 
   if (cell && cell.tagName === "TD") {
+    const [row, col] = getCoords(cell);
     if (isDragging) {
-      if (
-        !cell.classList.contains("start") &&
-        !cell.classList.contains("end")
-      ) {
-        cell.classList.toggle("wall");
+      const currentState = matrizTable[row][col];
+      if (currentState !== 1 && currentState !== 2) {
+        matrizTable[row][col] = 3;
       }
     } else {
       if (!startDot || cell.classList.contains("start")) {
-
-        cell.classList.add("start");
-        
-        !startDot ? (startDot = cell) : (startDot = false);
-
-        matrizTable[getCoords(cell)[0]][getCoords(cell)[1]] = 1;
-
+        !startDot
+          ? ((startDot = cell), (matrizTable[row][col] = 1))
+          : ((startDot = false), (matrizTable[row][col] = 0));
       } else if (!finishDot || cell.classList.contains("end")) {
-
-        cell.classList.toggle("end");
-        
-        !finishDot ? (finishDot = cell) : (finishDot = false);
-
-        matrizTable[getCoords(cell)[0]][getCoords(cell)[1]] = 2;
+        !finishDot
+          ? ((finishDot = cell),
+            (matrizTable[getCoords(cell)[0]][getCoords(cell)[1]] = 2))
+          : ((finishDot = false),
+            (matrizTable[getCoords(cell)[0]][getCoords(cell)[1]] = 0));
       } else {
-        cell.classList.toggle("wall");
+        if (cell.classList.contains("wall")) {
+          matrizTable[row][col] = 0;
+        } else {
+          matrizTable[row][col] = 3;
+        }
       }
     }
-    if (cell.classList.contains("wall")) {
-      matrizTable[getCoords(cell)[0]][getCoords(cell)[1]] = 3;
-    }
   }
+
+  // console.log(matrizTable);
+  renderMatriz();
 }
 
 function handleInteractionStart(event) {
@@ -219,24 +339,51 @@ function getCellFromTouchEvent(event) {
   return null;
 }
 
-function getCoords(cell, arr) {
-
-  console.log(cell);
-
+function getCoords(cell) {
   const [row, col] = cell.getAttribute("data-cord").split("-");
   return [Number(row), Number(col)];
 }
 
-function verifyValueCell(cell) {
-  const [row, col] = getCoords(cell);
+function verifyValueCell(cell, arr) {
+  const [row, col] = arr;
 
-  const matrizCell = matrizTable[row][col];
-
-  console.log(row, col, matrizCell);
-
-  if (matrizCell == 3 || matrizCell == 1) {
-    return false;
-  } else if (matrizCell == 0) {
-    return true;
+  if (cell) {
+    const [row, col] = getCoords(cell);
   }
+  matrizCell = matrizTable[row][col];
+
+  // console.log(alreadyArr(row, col));
+
+  if (matrizCell == 3 || matrizCell == 1 || alreadyArr(row, col)) {
+    return [false, false];
+  } else if (matrizCell == 0) {
+    return [true, false];
+  } else if (matrizCell == 2) {
+    isFind = true;
+    return [false, true];
+  } else {
+    return [false, false];
+  }
+}
+
+function alreadyArr(row, col, arr = visited) {
+  return arr.some(([r, c]) => r === row && c === col);
+}
+
+function initMatrizReference() {
+  matrizReference = [];
+  for (let i = 0; i < NUM_ROWS; i++) {
+    const row = [];
+    for (let j = 0; j < NUM_COLS; j++) {
+      row.push(null);
+    }
+    matrizReference.push(row);
+  }
+}
+
+function initTime() {
+  timeId = setInterval(() => {
+    time += 1;
+    timeGame.innerText = time;
+  }, 1000);
 }

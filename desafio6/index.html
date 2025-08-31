@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Jogo da vida</title>
+    <title>algoritmo pathfinding</title>
     <link rel="stylesheet" href="styles/style.css" />
   </head>
   <body>
     <div class="controls">
-      <h1>Jogo da vida</h1>
+      <h1>pathfinding</h1>
       <div class="buttons">
-        <button id="playAndPause">Play/Pause</button>
-        <button id="reset">Resetar</button>
+        <button id="playAndPause">Play</button>
+        <!-- <button id="reset">Resetar</button> -->
       </div>
 
       <label>
@@ -35,7 +35,17 @@
           value="10"
         />
       </label>
-      <p>total de passos: <span id="step">0</span></p>
+      <label>
+        <span>passos:</span>
+        <input
+          type="number"
+          class="time"
+          placeholder="passos"
+          id="steps"
+          value="100"
+        />
+      </label>
+      <p>tempo passado: <span id="time">0</span>s</p>
     </div>
     <div class="container">
       <table class="table" id="table">
